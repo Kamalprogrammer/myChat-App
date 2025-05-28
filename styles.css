@@ -1,0 +1,83 @@
+*{
+  /* padding: 0px; */
+  /* margin: 0px; */
+  /* height: 100%; */
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+}
+#chatMessages {
+  background-image: url('https://cdn.pixabay.com/photo/2022/09/21/17/02/blue-background-7470781_1280.jpg');
+  background-size: cover;
+}
+
+#userList{
+  height: 100vh;
+}
+.message {
+  max-width: 70%;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  clear: both;
+  position: relative;
+}
+
+.message.sent {
+  background-color: #DCF8C6;
+  float: right;
+}
+
+.message.received {
+  background-color: #FFFFFF;
+  float: left;
+}
+
+.user-item {
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-item:hover {
+  background-color: #f5f5f5;
+}
+
+.user-item.selected {
+  background-color: #e6f3ff;
+  font-weight: bold;
+}
+
+.user-status.online {
+  color: #10B981;
+}
+
+.user-status.offline {
+  color: #EF4444;
+}
+
+.user-email {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.message-status {
+  position: absolute;
+  bottom: 2px;
+  right: 5px;
+  font-size: 0.7em;
+}
+
+.message-status.sent::after {
+  content: '✓';
+  color: #888;
+}
+
+.message-status.delivered::after {
+  content: '✓✓';
+  color: #888;
+}
+
+.message-status.seen::after {
+  content: '✓✓';
+  color: #34B7F1;
+}
