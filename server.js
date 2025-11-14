@@ -42,8 +42,8 @@ const messageSchema = new mongoose.Schema({
 });
 const Message = mongoose.model('Message', messageSchema);
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve static files (HTML, CSS, client-side JS)
+app.use(express.static(path.join(__dirname)));
 
 // Track online users
 const onlineUsers = new Set();
