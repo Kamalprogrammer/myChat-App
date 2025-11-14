@@ -45,8 +45,9 @@ const Message = mongoose.model('Message', messageSchema);
 // Serve static files (HTML, CSS, client-side JS)
 app.use(express.static(path.join(__dirname)));
 
-// Track online users
+// Track online users and their active socket counts
 const onlineUsers = new Set();
+const userConnections = new Map();
 
 // Socket.IO Logic
 io.on('connection', (socket) => {
@@ -63,17 +64,23 @@ io.on('connection', (socket) => {
         { username, email: userData.email, createdAt: new Date() },
         { upsert: true, new: true }
       );
+      const connectionCount = (userConnections.get(username) || 0) + 1;
+      userConnections.set(username, connectionCount);
+
       onlineUsers.add(username);
       socket.join(username);
-      io.emit('userStatus', { username, status: 'online' });
+
+      if (connectionCount === 1) {
+        io.emit('userStatus', { username, status: 'online' });
+
+        // Send online users for status
+        io.emit('onlineUsers', Array.from(onlineUsers));
+      }
 
       // Send all users from database
       const users = await User.find().select('username email');
       console.log('Sending userList:', users);
       io.emit('userList', users);
-
-      // Send online users for status
-      io.emit('onlineUsers', Array.from(onlineUsers));
 
       // Update status to delivered for messages where user is recipient
       await Message.updateMany(
@@ -99,9 +106,15 @@ io.on('connection', (socket) => {
   // User disconnects
   socket.on('disconnect', () => {
     if (username) {
-      onlineUsers.delete(username);
-      io.emit('userStatus', { username, status: 'offline' });
-      io.emit('onlineUsers', Array.from(onlineUsers));
+      const remainingConnections = (userConnections.get(username) || 1) - 1;
+      if (remainingConnections <= 0) {
+        userConnections.delete(username);
+        onlineUsers.delete(username);
+        io.emit('userStatus', { username, status: 'offline' });
+        io.emit('onlineUsers', Array.from(onlineUsers));
+      } else {
+        userConnections.set(username, remainingConnections);
+      }
     }
   });
 

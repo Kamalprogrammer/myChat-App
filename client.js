@@ -1,5 +1,5 @@
-// Connect to Socket.io
-const socket = io();
+// Connect to Socket.io backend running on localhost:3000
+const socket = io('http://localhost:3000');
 
 // DOM Elements
 const chatForm = document.getElementById('chatForm');
