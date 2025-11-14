@@ -22,7 +22,7 @@ if (!username || !email) {
   email = 'anonymous@example.com';
 }
 socket.emit('join', { username, email });
-
+// here i have selected user as null 
 let selectedUser = null;
 
 // Handle server errors
