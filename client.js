@@ -91,14 +91,10 @@ socket.on('typing', (data) => {
 
 // Online user list
 let onlineUsers = [];
+let usersCache = [];
 
-socket.on('onlineUsers', (users) => {
-  onlineUsers = users;
-});
-
-// Receive full user list
-socket.on('userList', (users) => {
-  userList.innerHTML = users
+function renderUserList() {
+  userList.innerHTML = usersCache
     .filter(user => user.username !== username)
     .map(user => `
       <div class="user-item" data-username="${user.username}">
@@ -108,7 +104,6 @@ socket.on('userList', (users) => {
     `)
     .join('');
 
-  // Click event to open chat
   document.querySelectorAll('.user-item').forEach(item => {
     item.addEventListener('click', () => {
       selectedUser = item.dataset.username;
@@ -120,6 +115,17 @@ socket.on('userList', (users) => {
       socket.emit('loadChat', { sender: username, recipient: selectedUser });
     });
   });
+}
+
+socket.on('onlineUsers', (users) => {
+  onlineUsers = users;
+  renderUserList();
+});
+
+// Receive full user list
+socket.on('userList', (users) => {
+  usersCache = users;
+  renderUserList();
 });
 
 // Display message on screen
